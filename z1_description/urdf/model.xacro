@@ -1,0 +1,374 @@
+<?xml version="1.0"?>
+
+<robot name="z1_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find z1_description)/urdf/const.xacro"/>
+    <xacro:include filename="$(find z1_description)/urdf/utils.xacro"/>
+    <xacro:include filename="$(find z1_description)/urdf/camera.xacro"/>
+
+    <xacro:macro name="z1" params="id:='' connected_to:='' xyz:='0 0 0' rpy:='0 0 0'" >
+        <xacro:unless value="${not connected_to}">
+            <joint name="${id}${connected_to}_joint" type="fixed">
+                <parent link="${connected_to}"/>
+                <child link="${id}link00"/>
+                <origin rpy="${rpy}" xyz="${xyz}"/>
+            </joint>
+        </xacro:unless>
+
+        <link name="${id}link00">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link00.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="${motor_height}" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="0 0 0" xyz="0 0 ${motor_height/2.0}"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L00_ComX} ${L00_ComY} ${L00_ComZ}"/>
+                <mass value="${L00_Mass}"/>
+                <inertia
+                    ixx="${L00_Ixx}" ixy="${L00_Ixy}" ixz="${L00_Ixz}"
+                    iyy="${L00_Iyy}" iyz="${L00_Iyz}"
+                    izz="${L00_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint1" type="revolute">
+            <origin rpy="0 0 0" xyz="0 0 0.0585"/>
+            <parent link="${id}link00"/>
+            <child link="${id}link01"/>
+            <axis xyz="0 0 1"/>
+            <dynamics damping="${jointDamping}" friction="${jointFriction}"/>
+            <limit effort="${torqueMax}" velocity="${velocityMax}" lower="${joint1_PositionMin}" upper="${joint1_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link01">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link01.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="${2*motor_height}" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L01_ComX} ${L01_ComY} ${L01_ComZ}"/>
+                <mass value="${L01_Mass}"/>
+                <inertia
+                    ixx="${L01_Ixx}" ixy="${L01_Ixy}" ixz="${L01_Ixz}"
+                    iyy="${L01_Iyy}" iyz="${L01_Iyz}"
+                    izz="${L01_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint2" type="revolute">
+            <origin rpy="0 0 0" xyz="0 0 0.045"/>
+            <parent link="${id}link01"/>
+            <child link="${id}link02"/>
+            <axis xyz="0 1 0"/>
+            <dynamics damping="${2*jointDamping}" friction="${2*jointFriction}"/>
+            <limit effort="${2*torqueMax}" velocity="${velocityMax}" lower="${joint2_PositionMin}" upper="${joint2_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link02">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link02.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="${2.0*motor_height}" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
+            </collision>
+            <collision>
+                <geometry>
+                    <cylinder length="${arm1_height}" radius="${arm1_diameter}"/>
+                </geometry>
+                <origin rpy="0 ${PI/2.0} 0" xyz="${-0.045-arm1_height/2.0} 0 0"/>
+            </collision>
+            <collision>
+                <geometry>
+                    <cylinder length="${motor_height}" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="${PI/2.0} 0 0" xyz="-0.35 0 0"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L02_ComX} ${L02_ComY} ${L02_ComZ}"/>
+                <mass value="${L02_Mass}"/>
+                <inertia
+                    ixx="${L02_Ixx}" ixy="${L02_Ixy}" ixz="${L02_Ixz}"
+                    iyy="${L02_Iyy}" iyz="${L02_Iyz}"
+                    izz="${L02_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint3" type="revolute">
+            <origin rpy="0 0 0" xyz="-0.35 0 0"/>
+            <parent link="${id}link02"/>
+            <child link="${id}link03"/>
+            <axis xyz="0 1 0"/>
+            <dynamics damping="${jointDamping}" friction="${jointFriction}"/>
+            <limit effort="${torqueMax}" velocity="${velocityMax}" lower="${joint3_PositionMin}" upper="${joint3_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link03">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link03.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="${arm2_height-0.01}" radius="${arm2_diameter}"/>
+                </geometry>
+                <origin rpy="0 ${PI/2.0} 0" xyz="${0.065+arm2_height/2.0} 0 0.055"/>
+            </collision>
+            <collision>
+                <geometry>
+                    <cylinder length="0.059" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="0 ${PI/2.0} 0" xyz="${0.065+0.185-0.059/2.0} 0 0.055"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L03_ComX} ${L03_ComY} ${L03_ComZ}"/>
+                <mass value="${L03_Mass}"/>
+                <inertia
+                    ixx="${L03_Ixx}" ixy="${L03_Ixy}" ixz="${L03_Ixz}"
+                    iyy="${L03_Iyy}" iyz="${L03_Iyz}"
+                    izz="${L03_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint4" type="revolute">
+            <origin rpy="0 0 0" xyz="0.218 0 0.057"/> 
+            <parent link="${id}link03"/>
+            <child link="${id}link04"/>
+            <axis xyz="0 1 0"/>
+            <dynamics damping="${jointDamping}" friction="${jointFriction}"/>
+            <limit effort="${torqueMax}" velocity="${velocityMax}" lower="${joint4_PositionMin}" upper="${joint4_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link04">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link04.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="0.073" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="${PI/2.0} 0 0" xyz="0.0472 0 0"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L04_ComX} ${L04_ComY} ${L04_ComZ}"/>
+                <mass value="${L04_Mass}"/>
+                <inertia
+                    ixx="${L04_Ixx}" ixy="${L04_Ixy}" ixz="${L04_Ixz}"
+                    iyy="${L04_Iyy}" iyz="${L04_Iyz}"
+                    izz="${L04_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint5" type="revolute">
+            <origin rpy="0 0 0" xyz="0.07 0.0 0.0"/>
+            <parent link="${id}link04"/>
+            <child link="${id}link05"/>
+            <axis xyz="0 0 1"/>
+            <dynamics damping="${jointDamping}" friction="${jointFriction}"/>
+            <limit effort="${torqueMax}" velocity="${velocityMax}" lower="${joint5_PositionMin}" upper="${joint5_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link05">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link05.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L05_ComX} ${L05_ComY} ${L05_ComZ}"/>
+                <mass value="${L05_Mass}"/>
+                <inertia
+                    ixx="${L05_Ixx}" ixy="${L05_Ixy}" ixz="${L05_Ixz}"
+                    iyy="${L05_Iyy}" iyz="${L05_Iyz}"
+                    izz="${L05_Izz}"/>  
+            </inertial>
+        </link>
+
+        <joint name="${id}joint6" type="revolute">
+            <origin rpy="0 0 0" xyz="0.0492 0.0 0.0"/>
+            <parent link="${id}link05"/>
+            <child link="${id}link06"/>
+            <axis xyz="1 0 0"/>
+            <dynamics damping="${jointDamping}" friction="${jointFriction}"/>
+            <limit effort="${torqueMax}" velocity="${velocityMax}" lower="${joint6_PositionMin}" upper="${joint6_PositionMax}"/>
+        </joint>
+
+        <link name="${id}link06">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="file:///home/ccs/ROS2/learn_ws/src/z1_description/meshes/z1_Link06.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="${motor_height}" radius="${motor_diameter}"/>
+                </geometry>
+                <origin rpy="0 ${PI/2.0} 0" xyz="${motor_height/2.0} 0 0"/>
+            </collision>
+            <inertial>
+                <origin rpy="0 0 0" xyz="${L06_ComX} ${L06_ComY} ${L06_ComZ}"/>
+                <mass value="${L06_Mass}"/>
+                <inertia
+                    ixx="${L06_Ixx}" ixy="${L06_Ixy}" ixz="${L06_Ixz}"
+                    iyy="${L06_Iyy}" iyz="${L06_Iyz}"
+                    izz="${L06_Izz}"/> 
+            </inertial>
+        </link>
+
+
+        <joint name="${id}joint7" type="fixed">
+            <!-- <origin rpy="-${pi/2} 0.0 -${pi/2}" xyz="0.051 0.0 0.0"/> -->
+            <origin rpy="${pi/2} 0.0 ${pi/2}" xyz="0.051 0.0 0.0"/>
+            <parent link="${id}link06"/>
+            <child link="${id}link07"/>
+            <axis xyz="0 0 0"/>
+        </joint>
+
+        <link name="${id}link07">
+        </link>
+
+        <xacro:if value="$(arg OAKCamera)">
+            <xacro:camera id="${id}" connected_to="${id}link06" xyz="${0.051+0.02} 0 ${0.05+0.03}" rpy="0 0 0"/>
+        </xacro:if>
+
+        <xacro:if value="$(arg FTSensor)">
+            <link name="${id}ft_link">
+                <visual>
+                    <geometry>
+                        <cylinder radius="0.025" length="0.04"/>
+                    </geometry>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0.0 0.0"/>
+                </visual>
+                <collision>
+                    <geometry>
+                        <cylinder radius="0.025" length="0.04"/>
+                    </geometry>
+                    <origin xyz="0.0 0.0 0.0" rpy="0 0.0 0.0"/>
+                </collision>
+
+                <xacro:cylinder_inertial mass="0.03" radius="0.025" length="0.04" />
+            </link>
+
+            <xacro:linkGazebo link="${id}ft_link" />
+
+            <joint name="${id}ft_joint" type="fixed">
+                <origin xyz="${0.051+0.02} 0.0 0.0" rpy="${pi/2} 0.0 ${pi/2}"/>
+                <parent link="${id}link06"/>
+                <child link="${id}ft_link"/>
+            </joint>
+
+            <!-- Enable the Joint Feedback -->
+            <gazebo reference="${id}ft_joint">
+                <preserveFixedJoint>true</preserveFixedJoint>
+                <!-- <provide_feedback>true</provide_feedback> -->
+                <disableFixedJointLumping>true</disableFixedJointLumping>
+                <sensor name='ft_sensor' type='force_torque'>
+                    <update_rate>200</update_rate>
+                    <!-- <enable_metrics>true</enable_metrics> -->
+                    <force_torque>
+                        <frame>child</frame>
+                        <measure_direction>child_to_parent</measure_direction>
+                        <force>
+                        <x>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.0</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </x>
+                        <y>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.0</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </y>
+                        <z>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.0</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </z>
+                        </force>
+                        <torque>
+                        <x>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.000</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </x>
+                        <y>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.000</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </y>
+                        <z>
+                            <noise type='gaussian'>
+                            <mean>0</mean>
+                            <stddev>0.000</stddev>
+                            <bias_mean>0</bias_mean>
+                            <bias_stddev>0</bias_stddev>
+                            <dynamic_bias_stddev>0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>0</dynamic_bias_correlation_time>
+                            <precision>0</precision>
+                            </noise>
+                        </z>
+                        </torque>
+                    </force_torque>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
+    </xacro:macro>
+
+</robot>

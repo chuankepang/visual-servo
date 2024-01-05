@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<robot name="z1_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="linkGazebo" params="link">
+        <gazebo reference="${link}">
+            <collision>
+                <max_contacts>10</max_contacts>
+                <surface>
+                    <friction>
+                        <ode>
+                        <mu>1.0</mu>
+                        <mu2>1.0</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode>
+                        <kp>10000000.0</kp>
+                        <kd>1.0</kd>
+                        <min_depth>0.001</min_depth>
+                        <max_vel>0.1</max_vel>
+                        </ode>
+                    </contact>
+                </surface>
+            </collision>
+            <turnGravityOff>false</turnGravityOff>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="jointGazebo" params="name">
+        <joint name="${name}">
+            <command_interface name="position">
+                <param name="min">{-2*pi}</param>
+                <param name="max">{2*pi}</param>
+            </command_interface>
+            <command_interface name="velocity">
+                <param name="min">-3.2</param>
+                <param name="max">3.2</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">-30</param>
+                <param name="max">30</param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+    </xacro:macro>
+
+</robot>

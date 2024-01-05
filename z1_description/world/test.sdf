@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.6">
+  <world name="empty">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-contact-system"
+      name="gz::sim::systems::Contact">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-forcetorque-system"
+      name="gz::sim::systems::ForceTorque">
+    </plugin>
+    <plugin
+      filename="gz-sim-apply-link-wrench-system"
+      name="gz::sim::systems::ApplyLinkWrench">
+    </plugin>
+
+    <gui fullscreen="0">
+    
+    </gui>
+    <gravity>0 0 0</gravity>
+
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <light type="directional" name="light">
+      <cast_shadows>true</cast_shadows>
+      <pose>-1 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- <include>
+      <uri>
+      https://fuel.gazebosim.org/1.0/AndrejOrsula/models/aruco_default
+      </uri>
+    </include> -->
+
+    <!-- <model name="aruco_default">
+      <static>true</static>
+      <pose>1 0 0.5 0 -1.7 0</pose>
+      <link name="aruco_link">
+        <visual name="aruco_visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.68 0.9</size>
+            </plane>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.4 0.4 0.4 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>/home/ccs/ROS2/learn_ws/src/z1_description/materials/textures/pattern.png</albedo_map>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+      </link>
+    </model> -->
+
+    <include>
+      <static>true</static>
+      <uri>
+        model://Cardboard box
+      </uri>
+      <pose>0.8 0. 0.075 0 0 0</pose>
+    </include>
+
+    <include>
+      <static>true</static>
+      <uri>
+        model://Cardboard Aruco box
+      </uri>
+      <pose>0.8 0. 0.25 1.57 0 3.14</pose>
+    </include>
+
+    <!-- ign topic -t "/world/empty/wrench/persistent" -m ignition.msgs.EntityWrench  -p "entity: {name: 'cardboard_box', type: MODEL}, wrench: {force: {x:0, y: 0.1, z: 0}}" -->
+    <!-- ign topic -t "/world/empty/wrench" -m ignition.msgs.EntityWrench  -p "entity: {name: 'cardboard_box', type: MODEL}, wrench: {force: {x:0, y: 0.1, z: 0}}" -->
+  </world>
+</sdf>

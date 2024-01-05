@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<robot name="z1_dual" xmlns:xacro="http://www.ros.org/wiki/xacro">
+   <xacro:arg name="UnitreeGripper" default="false"/>
+    <xacro:arg name="OAKCamera" default="true"/>
+    <xacro:arg name="FTSensor" default="true"/>
+
+    <xacro:include filename="$(find z1_description)/urdf/model.xacro"/>
+    <xacro:include filename="$(find z1_description)/urdf/gazebo.xacro"/>
+
+    <link name="world"/>
+
+    <link name="base"/>
+
+    <joint name="base_static_joint" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="world"/>
+        <child link="base"/>
+    </joint>
+
+    <!-- add arms names prefixes -->
+    <xacro:arg name="arm_1" default="left_" />
+    <xacro:arg name="arm_2" default="right_" />
+
+    <!-- right arm with gripper -->
+    <xacro:z1 id="$(arg arm_1)" connected_to="base" xyz="0 0.3 0.0" rpy="0 0 0"/>
+
+    <!-- left arm with gripper -->
+    <xacro:z1 id="$(arg arm_2)" connected_to="base" xyz="0 -0.3 0.0" rpy="0 0 0" />
+
+    <xacro:camera id="base_" connected_to="base" xyz="0 0 0.3" rpy="0 0 0"/>
+
+    <ros2_control name="GazeboSimSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <xacro:jointGazebo name="left_joint1" />
+        <xacro:jointGazebo name="left_joint2" />
+        <xacro:jointGazebo name="left_joint3" />
+        <xacro:jointGazebo name="left_joint4" />
+        <xacro:jointGazebo name="left_joint5" />
+        <xacro:jointGazebo name="left_joint6" />
+        <xacro:jointGazebo name="right_joint1" />
+        <xacro:jointGazebo name="right_joint2" />
+        <xacro:jointGazebo name="right_joint3" />
+        <xacro:jointGazebo name="right_joint4" />
+        <xacro:jointGazebo name="right_joint5" />
+        <xacro:jointGazebo name="right_joint6" />
+
+    </ros2_control>
+
+    <gazebo>
+        <!-- 必须要全部才有用 -->
+        <self_collide>1</self_collide>
+        
+        <!-- 理论上可以用相对路径这个地方 -->
+        <!-- <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+            <parameters>/home/ccs/moveit_ws/src/z1_description/config/controller_dual.yaml</parameters>
+        </plugin> -->
+
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find z1_description)/config/controller_dual.yaml</parameters>
+            <!-- <parameters>/home/ccs/moveit_ws/src/z1_description/config/controller_dual.yaml</parameters> -->
+        </plugin>
+
+        <!-- <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find gz_ros2_control_demos)/config/cartpole_controller_effort.yaml</parameters>
+        </plugin> -->
+
+        <plugin name="ignition::gazebo::systems::Sensors" filename="ignition-gazebo-sensors-system">
+        </plugin>
+
+        <plugin filename="ignition-gazebo-forcetorque-system" name="ignition::gazebo::systems::ForceTorque">
+        </plugin>
+    </gazebo>
+
+</robot>
